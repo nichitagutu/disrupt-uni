@@ -2,103 +2,48 @@ import React, { useState } from "react";
 import { HaloGateway } from "@arx-research/libhalo/halo/gateway/requestor";
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import QRCode from "react-qr-code";
-import { isMobile } from "react-device-detect";
-import LoginButton from "./components/LoginButton"
-import LogoutButton from "./components/LogoutButton"
-import Profile from "./components/Profile"
+import LoginButton from "./components/LoginButton";
+import LogoutButton from "./components/LogoutButton";
+import Profile from "./components/Profile";
 
-const Gate = new HaloGateway("wss://s1.halo-gateway.arx.org");
-Gate.gatewayServerHttp = "https://s1.halo-gateway.arx.org/e";
+import {
+  EAS,
+  Offchain,
+  SchemaEncoder,
+  SchemaRegistry,
+} from "@ethereum-attestation-service/eas-sdk";
+import { ethers } from "ethers";
+import ArxLoginPage from "./components/ArxLoginPage";
+
+const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
+const EASSchemaUID =
+  "0x8d27497483b403775138b1d1830ad3914f7654db9ec22badd1944abcdbbb6911";
+
+// Initialize the sdk with the address of the EAS Schema contract address
+const eas = new EAS(EASContractAddress);
+
+// Gets a default provider (in production use something else like infura/alchemy)
+const provider = ethers.providers.getDefaultProvider("sepolia");
+
+// Connects an ethers style provider/signingProvider to perform read/write functions.
+// MUST be a signer to do write operations!
+eas.connect(provider);
+
+
 
 function App() {
-  const [statusText, setStatusText] = useState("Login with your student card");
-  const [pairingLink, setPairingLink] = useState(null);
 
-  async function mobileConnect() {
-    let command = {
-      name: "sign",
-      keyNo: 1,
-      message: "010203",
-    };
+  const [currentStage, setCurrentStage] = useState("login");
 
-    let res;
-
-    try {
-      // --- request NFC command execution ---
-      res = await execHaloCmdWeb(command);
-      // the command has succeeded, display the result to the user
-      setStatusText(JSON.stringify(res, null, 4));
-    } catch (e) {
-      // the command has failed, display error to the user
-      setStatusText("Error: " + String(e));
-    }
-  }
-
-  async function desktopConnect() {
-    try {
-      const pairInfo = await Gate.startPairing();
-      console.log("URL in the QR code:", pairInfo.execURL);
-      console.log(
-        "Please scan the QR code presented below with your smartphone."
-      );
-      setPairingLink(pairInfo.execURL);
-    } catch (e) {
-      console.log("Failed to start pairing: " + e.stack);
-    }
-
-    try {
-      await Gate.waitConnected();
-    } catch (e) {
-      console.log("Failed to connect to the gateway: " + e.stack);
-      return;
-    }
-
-    setPairingLink(null);
-
-    await btnInitiateSessClicked();
-  }
-
-  async function btnInitiateSessClicked() {
-    const command = {
-      name: "sign",
-      message: "hello world",
-      keyNo: 1,
-      format: "text",
-    };
-
-    console.log(
-      "Requested to execute a command. Please click [Confirm] on your smartphone and tap your HaLo tag."
-    );
-
-    try {
-      let res = await Gate.execHaloCmd(command);
-      console.log("Command completed. Result: " + JSON.stringify(res));
-    } catch (e) {
-      console.log("Failed to request command execution: " + e.stack);
-    }
-  }
-
-  function loginClickHandler() {
-    if (isMobile) {
-      mobileConnect();
-    } else {
-      desktopConnect();
-    }
-  }
+  
 
   return (
-    <div className="container-fluid">
-      <article>
-        <button onClick={loginClickHandler}>{statusText}</button>
-        {pairingLink && <QRCode value={pairingLink} />}
-
-
-
-
-      <LoginButton />
-      <LogoutButton />
-      <Profile/>
-      </article>
+    <div className="container-fluid h-full flex items-center justify-center">
+      <ArxLoginPage />
+      {/* 
+        <LoginButton />
+        <LogoutButton />
+        <Profile /> */}
     </div>
   );
 }
