@@ -44,4 +44,6 @@ Create a production bundle:
 npm run build
 ```
 
-
+To run the HaLo NFC verification scan the QR code on your desktop and then touch the NFC chip with your phone.
+WorldID verification is only possible if you have the WorldID.
+For Mina you need to have a Mina wallet installed.
