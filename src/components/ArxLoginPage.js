@@ -55,9 +55,9 @@ const ArxLoginPage = () => {
   return (
     <LoginPage>
       <Text
-        header={"Join the Transparency portal"}
+        header={"Join the Universe portal"}
         text={
-          "Transparency enables university communities participation in the budgeting and funds spending to limit corruption and money-laundering."
+          "Universe enables university communities participation in the budgeting and funds spending to limit corruption and money-laundering."
         }
         hasIcon={true}
       />
