@@ -16,7 +16,7 @@ export class Balances extends RuntimeModule<unknown> {
     this.balances.set(to, newBalance);
   }
 
-  // @runtimeMethod()
+  // TODO: @ runtimeMethod()
   // public transferSigned(from...) {
   //   assert(this.transaction.sender.equals(from));
   //   this.transfer(...)
