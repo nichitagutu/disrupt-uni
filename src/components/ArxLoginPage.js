@@ -1,17 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { HaloGateway, execHaloCmdWeb } from "@arx-research/libhalo/api/web";
 import { isMobile } from "react-device-detect";
 
 import Text from "./Text";
 import QRCode from "react-qr-code";
-import ReactModal from "react-modal";
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+
+
 
 const Gate = new HaloGateway("wss://s1.halo-gateway.arx.org");
 Gate.gatewayServerHttp = "https://s1.halo-gateway.arx.org/e";
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 16,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "1rem",
+  padding: "2rem"
+};
+
+
+
 const ArxLoginPage = () => {
   const [pairingLink, setPairingLink] = useState(null);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  useEffect(() => {
+    console.log("pairingLink", pairingLink);
+    if (pairingLink !== null) {
+      console.log("pairingLink", pairingLink);
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [pairingLink]);
+
+
   return (
     <div className="pb-40 flex flex-col gap-4">
       <Text
@@ -22,9 +62,16 @@ const ArxLoginPage = () => {
         hasIcon={true}
       />
       <ArxLoginButton setPairingLink={setPairingLink} />
-      <ReactModal isOpen={pairingLink}>
-        <QRCode value={pairingLink} />
-      </ReactModal>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <QRCode value={pairingLink} />
+        </Box>
+      </Modal>
     </div>
   );
 };
