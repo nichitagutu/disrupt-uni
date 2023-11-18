@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { HaloGateway } from "@arx-research/libhalo/halo/gateway/requestor";
-import { execHaloCmdWeb } from "@arx-research/libhalo/halo/gateway/requestor";
+import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import QRCode from "react-qr-code";
 import { isMobile } from "react-device-detect";
 
 const Gate = new HaloGateway("wss://s1.halo-gateway.arx.org");
-// Gate.gatewayServerHttp = "https://c96b-212-175-155-170.ngrok-free.app";
 Gate.gatewayServerHttp = "https://s1.halo-gateway.arx.org/e";
 
 function App() {
