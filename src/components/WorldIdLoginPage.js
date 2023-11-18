@@ -2,7 +2,7 @@ import LoginButton from "./LoginButton";
 import LoginPage from "./LoginPage";
 import Text from "./Text";
 
-const WorldIdLoginPage = () => {
+const WorldIdLoginPage = ({ setIsAuthenticated }) => {
   return (
     <LoginPage>
       <Text
@@ -11,7 +11,7 @@ const WorldIdLoginPage = () => {
           "This will open a WorldID app and prompt you to confirm your identity."
         }
       />
-      <LoginButton />
+      <LoginButton setIsAuthenticated={setIsAuthenticated} />
     </LoginPage>
   );
 };

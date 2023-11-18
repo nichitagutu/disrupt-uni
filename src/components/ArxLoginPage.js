@@ -6,9 +6,8 @@ import { isMobile } from "react-device-detect";
 import Text from "./Text";
 import QRCode from "react-qr-code";
 
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
 
 import LoginPage from "./LoginPage";
 
@@ -16,12 +15,11 @@ const Gate = new HaloGateway("wss://s1.halo-gateway.arx.org");
 Gate.gatewayServerHttp = "https://s1.halo-gateway.arx.org/e";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  bgcolor: '#fff',
-  border: '2px solid #000',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "#fff",
   boxShadow: 24,
   p: 4,
   borderRadius: 16,
@@ -30,27 +28,26 @@ const style = {
   alignItems: "center",
   justifyContent: "center",
   gap: "1rem",
-  padding: "2rem"
+  padding: "2rem",
 };
 
-
-
-const ArxLoginPage = () => {
-  const [pairingLink, setPairingLink] = useState(null);
+const ArxLoginPage = ({ setArxWallet }) => {
+  const [pairingLink, setPairingLink] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setPairingLink("");
+  };
 
   useEffect(() => {
     console.log("pairingLink", pairingLink);
-    if (pairingLink !== null) {
+    if (pairingLink !== "") {
       console.log("pairingLink", pairingLink);
       setOpen(true);
     } else {
       setOpen(false);
     }
   }, [pairingLink]);
-
 
   return (
     <LoginPage>
@@ -61,7 +58,10 @@ const ArxLoginPage = () => {
         }
         hasIcon={true}
       />
-      <ArxLoginButton setPairingLink={setPairingLink} />
+      <ArxLoginButton
+        setPairingLink={setPairingLink}
+        setArxWallet={setArxWallet}
+      />
       <Modal
         open={open}
         onClose={handleClose}
@@ -76,7 +76,7 @@ const ArxLoginPage = () => {
   );
 };
 
-const ArxLoginButton = ({ setPairingLink }) => {
+const ArxLoginButton = ({ setPairingLink, setArxWallet }) => {
   const [statusText, setStatusText] = useState("Tap uni card");
   async function mobileConnect() {
     let command = {
@@ -117,7 +117,7 @@ const ArxLoginButton = ({ setPairingLink }) => {
       return;
     }
 
-    setPairingLink(null);
+    setPairingLink("");
 
     await initiateSession();
   }
@@ -135,8 +135,9 @@ const ArxLoginButton = ({ setPairingLink }) => {
     );
 
     try {
-      let res = await Gate.execHaloCmd(command);
-      console.log("Command completed. Result: " + JSON.stringify(res));
+      const result = await Gate.execHaloCmd(command);
+      setArxWallet(result.output.etherAddress);
+      console.log("Command completed. Result: " + JSON.stringify(result));
     } catch (e) {
       console.log("Failed to request command execution: " + e.stack);
     }
@@ -150,7 +151,10 @@ const ArxLoginButton = ({ setPairingLink }) => {
     }
   }
   return (
-    <button className="bg-[#F0C600] px-16 py-2 font-bold " onClick={loginClickHandler}>
+    <button
+      className="bg-[#F0C600] px-16 py-2 font-bold "
+      onClick={loginClickHandler}
+    >
       {statusText}
     </button>
   );

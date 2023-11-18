@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HaloGateway } from "@arx-research/libhalo/halo/gateway/requestor";
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import QRCode from "react-qr-code";
@@ -16,6 +16,7 @@ import {
 import { ethers } from "ethers";
 import ArxLoginPage from "./components/ArxLoginPage";
 import WorldIdLoginPage from "./components/WorldIdLoginPage";
+import MinaLoginPage from "./components/NoWalletPage";
 
 const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
 const EASSchemaUID =
@@ -32,23 +33,42 @@ const provider = ethers.providers.getDefaultProvider("sepolia");
 eas.connect(provider);
 
 function App() {
-  const [currentStage, setCurrentStage] = useState("arx");
+  const minaWallet = window.mina;
+  const [arxWallet, setArxWallet] = useState(null);
+  const [worldIdAuthenticated, setWorldIdAuthenticated] = useState(false);
+  const [currentStage, setCurrentStage] = useState(minaWallet ? "arx" : "mina");
+
+  console.log("currentStage ", currentStage);
+
+  console.log("arxWallet", arxWallet);
+
+  useEffect(() => {
+    if (minaWallet === undefined) {
+      setCurrentStage("mina");
+    } else {
+      if (arxWallet !== null && worldIdAuthenticated) {
+        setCurrentStage("main");
+      } else if (arxWallet !== null) {
+        setCurrentStage("worldid");
+      } else {
+        setCurrentStage("arx");
+      }
+    }
+  }, [arxWallet, worldIdAuthenticated, minaWallet]);
 
   return (
-    // <div className="container-fluid h-full flex flex-col items-center justify-center">
-    //   <StageCounter currentStage={currentStage} />
-    //   <ArxLoginPage />
-    //   {/* <WorldIdLoginPage /> */}
-    //   {/* 
-    //     <LoginButton />
-    //     <LogoutButton />
-    //     <Profile /> */}
-    // </div>
+    <div className="container-fluid h-full flex flex-col items-center justify-center">
+      {currentStage !== "mina" && currentStage !== "main" && (
+        <StageCounter currentStage={currentStage} />
+      )}
 
-
-    <>
-      <MainPage />
-    </>
+      {currentStage === "arx" && <ArxLoginPage setArxWallet={setArxWallet} />}
+      {currentStage === "worldid" && (
+        <WorldIdLoginPage setIsAuthenticated={setWorldIdAuthenticated} />
+      )}
+      {currentStage === "mina" && <MinaLoginPage />}
+      {currentStage === "main" && <MainPage />}
+    </div>
   );
 }
 
