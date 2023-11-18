@@ -7,6 +7,8 @@ Universe is a protocol and a dapp proving that a transparent and academic commun
 
 ## Intro 
 
+![banner github universe](https://github.com/nichitagutu/disrupt-uni/assets/119045809/e3bfe6d0-6dd3-491f-a88c-ba6314f69ff7)
+
 
 Helena from our team had been doing the OSINT investigations about corruption in Ukrainian universities.
 3.7 million USD was stolen in ONE corruption scheme run by my university management and it took us 5 years to investigate this flow and make it public.
