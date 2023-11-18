@@ -7,6 +7,9 @@ import LogoutButton from "./components/LogoutButton";
 import Profile from "./components/Profile";
 import MainPage from "./pages/MainPage";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   EAS,
   Offchain,
@@ -68,6 +71,7 @@ function App() {
       )}
       {currentStage === "mina" && <MinaLoginPage />}
       {currentStage === "main" && <MainPage />}
+      <ToastContainer />
     </div>
   );
 }
