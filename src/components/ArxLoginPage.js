@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
 
+import LoginPage from "./LoginPage";
 
 const Gate = new HaloGateway("wss://s1.halo-gateway.arx.org");
 Gate.gatewayServerHttp = "https://s1.halo-gateway.arx.org/e";
@@ -53,7 +54,7 @@ const ArxLoginPage = () => {
 
 
   return (
-    <div className="pb-40 flex flex-col gap-4">
+    <LoginPage>
       <Text
         header={"Join the Transparency portal"}
         text={
@@ -72,7 +73,7 @@ const ArxLoginPage = () => {
           <QRCode value={pairingLink} />
         </Box>
       </Modal>
-    </div>
+    </LoginPage>
   );
 };
 
@@ -150,8 +151,9 @@ const ArxLoginButton = ({ setPairingLink }) => {
     }
   }
   return (
-    <button onClick={loginClickHandler}>{statusText}</button>
-    // {pairingLink && <QRCode value={pairingLink} />}
+    <button className="primary" onClick={loginClickHandler}>
+      {statusText}
+    </button>
   );
 };
 

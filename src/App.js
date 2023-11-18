@@ -14,6 +14,7 @@ import {
 } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import ArxLoginPage from "./components/ArxLoginPage";
+import WorldIdLoginPage from "./components/WorldIdLoginPage";
 
 const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
 const EASSchemaUID =
@@ -29,17 +30,14 @@ const provider = ethers.providers.getDefaultProvider("sepolia");
 // MUST be a signer to do write operations!
 eas.connect(provider);
 
-
-
 function App() {
-
-  const [currentStage, setCurrentStage] = useState("login");
-
-  
+  const [currentStage, setCurrentStage] = useState("arx");
 
   return (
-    <div className="container-fluid h-full flex items-center justify-center">
-      <ArxLoginPage />
+    <div className="container-fluid h-full flex flex-col items-center justify-center">
+      <StageCounter currentStage={currentStage} />
+      {/* <ArxLoginPage /> */}
+      <WorldIdLoginPage />
       {/* 
         <LoginButton />
         <LogoutButton />
@@ -47,5 +45,13 @@ function App() {
     </div>
   );
 }
+
+const StageCounter = ({ currentStage }) => {
+  return (
+    <div className="text-md text-gray-500 select-none">
+      {currentStage === "arx" ? "1/2" : "2/2"}
+    </div>
+  );
+};
 
 export default App;

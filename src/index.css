@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
+@import url("https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap");
+
+html,
+body,
+#root {
   height: 100vh;
+}
+
+:root {
+  --primary: #d81b60;
 }
