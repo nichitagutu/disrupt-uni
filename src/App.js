@@ -5,6 +5,7 @@ import QRCode from "react-qr-code";
 import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
 import Profile from "./components/Profile";
+import MainPage from "./pages/MainPage";
 
 import {
   EAS,
@@ -34,22 +35,27 @@ function App() {
   const [currentStage, setCurrentStage] = useState("arx");
 
   return (
-    <div className="container-fluid h-full flex flex-col items-center justify-center">
-      <StageCounter currentStage={currentStage} />
-      {/* <ArxLoginPage /> */}
-      <WorldIdLoginPage />
-      {/* 
-        <LoginButton />
-        <LogoutButton />
-        <Profile /> */}
-    </div>
+    // <div className="container-fluid h-full flex flex-col items-center justify-center">
+    //   <StageCounter currentStage={currentStage} />
+    //   <ArxLoginPage />
+    //   {/* <WorldIdLoginPage /> */}
+    //   {/* 
+    //     <LoginButton />
+    //     <LogoutButton />
+    //     <Profile /> */}
+    // </div>
+
+
+    <>
+      <MainPage />
+    </>
   );
 }
 
 const StageCounter = ({ currentStage }) => {
   return (
-    <div className="text-md text-gray-500 select-none">
-      {currentStage === "arx" ? "1/2" : "2/2"}
+    <div className="text-md text-gray-500 select-none font-lightw">
+      Step {currentStage === "arx" ? "1/2" : "2/2"}
     </div>
   );
 };

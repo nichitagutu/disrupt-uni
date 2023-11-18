@@ -12,4 +12,5 @@ body,
 
 :root {
   --primary: #d81b60;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }

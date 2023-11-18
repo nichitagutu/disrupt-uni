@@ -77,7 +77,7 @@ const ArxLoginPage = () => {
 };
 
 const ArxLoginButton = ({ setPairingLink }) => {
-  const [statusText, setStatusText] = useState("Login with your student card");
+  const [statusText, setStatusText] = useState("Tap uni card");
   async function mobileConnect() {
     let command = {
       name: "sign",
@@ -150,7 +150,7 @@ const ArxLoginButton = ({ setPairingLink }) => {
     }
   }
   return (
-    <button className="primary" onClick={loginClickHandler}>
+    <button className="bg-[#F0C600] px-16 py-2 font-bold " onClick={loginClickHandler}>
       {statusText}
     </button>
   );
