@@ -3,6 +3,9 @@ import { HaloGateway } from "@arx-research/libhalo/halo/gateway/requestor";
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import QRCode from "react-qr-code";
 import { isMobile } from "react-device-detect";
+import LoginButton from "./components/LoginButton"
+import LogoutButton from "./components/LogoutButton"
+import Profile from "./components/Profile"
 
 const Gate = new HaloGateway("wss://s1.halo-gateway.arx.org");
 Gate.gatewayServerHttp = "https://s1.halo-gateway.arx.org/e";
@@ -88,6 +91,13 @@ function App() {
       <article>
         <button onClick={loginClickHandler}>{statusText}</button>
         {pairingLink && <QRCode value={pairingLink} />}
+
+
+
+
+      <LoginButton />
+      <LogoutButton />
+      <Profile/>
       </article>
     </div>
   );

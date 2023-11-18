@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@arx-research/libhalo": "^1.2.2",
+    "@auth0/auth0-react": "^2.2.3",
     "@picocss/pico": "^1.5.10",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
