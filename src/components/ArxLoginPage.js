@@ -7,7 +7,6 @@ import Text from "./Text";
 import QRCode from "react-qr-code";
 
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
 
@@ -21,7 +20,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  bgcolor: 'background.paper',
+  bgcolor: '#fff',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,

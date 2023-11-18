@@ -7,7 +7,7 @@ const Text = ({ header, text, hasIcon }) => {
         <div className="">{hasIcon && <NounsGlasses />}</div>
         <h5 className="font-header text-2xl">{header}</h5>
       </div>
-      <p>{text}</p>
+      <p className="max-w-[44rem]">{text}</p>
     </div>
   );
 };
