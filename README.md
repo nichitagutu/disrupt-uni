@@ -7,7 +7,8 @@ Universe is a protocol and a dapp proving that a transparent and academic commun
 
 ## Intro 
 
-![banner github universe](https://github.com/nichitagutu/disrupt-uni/assets/119045809/e3bfe6d0-6dd3-491f-a88c-ba6314f69ff7)
+![banner github universe](https://github.com/nichitagutu/disrupt-uni/assets/119045809/2f06f26e-bd6a-4666-b198-1a799bc38e78)
+
 
 
 Helena from our team has been doing the OSINT investigations about corruption in Ukrainian universities.
