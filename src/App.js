@@ -7,6 +7,7 @@ import LogoutButton from "./components/LogoutButton";
 import Profile from "./components/Profile";
 import MainPage from "./pages/MainPage";
 import { useAccount, useSigner } from 'wagmi'
+import { ethers } from "ethers";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -36,6 +37,40 @@ function App() {
   console.log("currentStage ", currentStage);
 
   console.log("arxWallet", arxWallet);
+
+
+  // Initialize the sdk with the address of the EAS Schema contract address
+  const eas = new EAS(EASContractAddress);
+
+  // Gets a default provider (in production use something else like infura/alchemy)
+  const provider = ethers.providers.getDefaultProvider("sepolia");
+
+  const schemaUID = "0x6617f6a4e3955732222c70725c0a460e43220557e94faf1188e6ef6249407ece";
+  // Signer must be an ethers-like signer.
+  // Initialize SchemaEncoder with the schema string
+  const schemaEncoder = new SchemaEncoder("address wallet_address,string worldId");
+
+
+  async function attest() {
+    const encodedData = schemaEncoder.encodeData([
+      { name: "wallet_address", value: address, type: "address" },
+      { name: "worldId", value: "worldid...", type: "string" }
+    ]);
+    const tx = await eas.attest({
+      schema: schemaUID,
+      data: {
+        recipient: address,
+        expirationTime: 0,
+        revocable: true, // Be aware that if your schema is not revocable, this MUST be false
+        data: encodedData,
+      },
+    });
+    const newAttestationUID = await tx.wait();
+
+
+    console.log("New attestation UID:", newAttestationUID);
+  }
+
 
   useEffect(() => {
     if (arxWallet !== null && worldIdAuthenticated && walletAddress) {
