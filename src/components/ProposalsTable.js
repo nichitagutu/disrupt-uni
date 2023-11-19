@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as NounsGlasses } from "./nouns_glasses.svg";
-import { usePrepareContractWrite, useContractWrite, useContractRead, useAccount, useWalletClient } from 'wagmi'
+import {
+  usePrepareContractWrite,
+  useContractWrite,
+  useContractRead,
+  useAccount,
+  useWalletClient,
+} from "wagmi";
 import ConnectButton from "./ConnectButton";
-import ABI from '../contracts/ABI.json';
+import ABI from "../contracts/ABI.json";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import {
@@ -46,14 +52,13 @@ export function walletClientToSigner(walletClient) {
   const network = {
     chainId: chain.id,
     name: chain.name,
-    ensAddress: chain.contracts?.ensRegistry?.address
+    ensAddress: chain.contracts?.ensRegistry?.address,
   };
   const provider = new providers.Web3Provider(transport, network);
   const signer = provider.getSigner(account.address);
 
   return signer;
 }
-
 
 export function useSigner() {
   const { data: walletClient } = useWalletClient();
@@ -69,7 +74,6 @@ export function useSigner() {
     }
 
     getSigner();
-
   }, [walletClient]);
   return signer;
 }
@@ -77,34 +81,42 @@ export function useSigner() {
 const contractAddress = "0xD3Fdec79074942F36929A80E816dB379d0Af99ab";
 
 const ProposalsTable = () => {
-  const { address, isConnecting, isDisconnected } = useAccount()
-  const { config: configVoteFor, error: errorVoteFor } = usePrepareContractWrite({
+  const { address, isConnecting, isDisconnected } = useAccount();
+  const { config: configVoteFor, error: errorVoteFor } =
+    usePrepareContractWrite({
+      address: contractAddress,
+      abi: ABI,
+      functionName: "vote",
+      args: [0, true],
+    });
+  const { write: voteFor } = useContractWrite(configVoteFor);
+
+  const { config: configVoteAgainst, error: errorVoteAgainst } =
+    usePrepareContractWrite({
+      address: contractAddress,
+      abi: ABI,
+      functionName: "vote",
+      args: [0, false],
+    });
+  const { write: voteAgainst } = useContractWrite(configVoteAgainst);
+
+  const {
+    data: contractData,
+    isError,
+    isLoading,
+  } = useContractRead({
     address: contractAddress,
     abi: ABI,
-    functionName: 'vote',
-    args: [0, true]
-    args: [0, true]
-  })
-  const { write: voteFor } = useContractWrite(configVoteFor)
+    functionName: "getProposalResult",
+    args: [0],
+  });
 
-  const { config: configVoteAgainst, error: errorVoteAgainst } = usePrepareContractWrite({
-    address: contractAddress,
-    abi: ABI,
-    functionName: 'vote',
-    args: [0, false]
-  })
-  const { write: voteAgainst } = useContractWrite(configVoteAgainst)
-
-  const { data: contractData, isError, isLoading } = useContractRead({
-    address: contractAddress,
-    abi: ABI,
-    functionName: 'getProposalResult',
-    args: [0]
-  })
-
-  data[0].for = contractData[1].toString()
-  data[0].against = contractData[2].toString()
-  console.log(contractData)
+  if (contractData) {
+    console.log("contractData", contractData);
+    data[0].for = contractData[1].toString();
+    data[0].against = contractData[2].toString();
+  }
+  console.log(contractData);
 
   // Initialize the sdk with the address of the EAS Schema contract address
   const eas = new EAS(EASContractAddress);
@@ -119,10 +131,12 @@ const ProposalsTable = () => {
   eas.connect(signer);
 
   // Initialize SchemaEncoder with the schema string
-  const schemaEncoder = new SchemaEncoder("string university, string description, bool hasVoted");
+  const schemaEncoder = new SchemaEncoder(
+    "string university, string description, bool hasVoted"
+  );
 
-
-  const schemaUID = "0xb16fa048b0d597f5a821747eba64efa4762ee5143e9a80600d0005386edfc995";
+  const schemaUID =
+    "0xb16fa048b0d597f5a821747eba64efa4762ee5143e9a80600d0005386edfc995";
 
   async function attest() {
     const encodedData = schemaEncoder.encodeData([

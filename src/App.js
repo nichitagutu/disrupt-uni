@@ -88,20 +88,6 @@ function App() {
     console.log("New attestation UID:", newAttestationUID);
   }
 
-
-  useEffect(() => {
-    if (arxWallet !== null && worldIdAuthenticated && walletAddress) {
-      setCurrentStage("main");
-    } else if (arxWallet !== null && !worldIdAuthenticated) {
-      setCurrentStage("worldid");
-    } else if (arxWallet !== null && worldIdAuthenticated && !walletAddress) {
-      setCurrentStage("walletconnect");
-    } else {
-      setCurrentStage("arx");
-    }
-
-  }, [arxWallet, worldIdAuthenticated]);
-
   return (
     <div className="container-fluid h-full flex flex-col items-center justify-center">
       {currentStage !== "mina" && currentStage !== "main" && (
