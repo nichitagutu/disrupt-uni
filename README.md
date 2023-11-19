@@ -47,4 +47,4 @@ npm run build
 
 To run the HaLo NFC verification scan the QR code on your desktop and then touch the NFC chip with your phone.
 WorldID verification is only possible if you have the WorldID.
-For Mina you need to have a Mina wallet installed.
+Mina Contracts are added to the repo but front end is connected to a simple Ethereum smart contract for the sake of the demo as we encountered some issues with Mina that need more time to be fixed. If you want to use Mina Contracts - it requires the Aura wallet (mina-native wallet).
