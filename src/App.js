@@ -6,7 +6,7 @@ import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
 import Profile from "./components/Profile";
 import MainPage from "./pages/MainPage";
-import { useAccount } from 'wagmi'
+import { useAccount } from "wagmi";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -37,28 +37,32 @@ const provider = ethers.providers.getDefaultProvider("sepolia");
 eas.connect(provider);
 
 function App() {
-  const { address, isConnecting, isDisconnected } = useAccount()
+  const getStage = () => {
+    return localStorage.getItem("currentStage");
+  };
+  const { address, isConnecting, isDisconnected } = useAccount();
   const [arxWallet, setArxWallet] = useState(null);
   const [worldIdAuthenticated, setWorldIdAuthenticated] = useState(false);
   const [walletAddress, setWalletAddress] = useState(address);
-  const [currentStage, setCurrentStage] = useState("arx");
+  const savedStage = getStage();
+  const [currentStage, setCurrentStage] = useState(
+    savedStage ? savedStage : "arx"
+  );
+
+  const saveStage = (stage) => {
+    localStorage.setItem("currentStage", stage);
+  };
+
+  useEffect(() => {
+    if (address) {
+      saveStage("main");
+      setCurrentStage("main");
+    }
+  }, [address]);
 
   console.log("currentStage ", currentStage);
 
   console.log("arxWallet", arxWallet);
-
-  useEffect(() => {
-    if (arxWallet !== null && worldIdAuthenticated && walletAddress) {
-      setCurrentStage("main");
-    } else if (arxWallet !== null && !worldIdAuthenticated) {
-      setCurrentStage("worldid");
-    } else if (arxWallet !== null && worldIdAuthenticated && !walletAddress) {
-      setCurrentStage("walletconnect");
-    } else {
-      setCurrentStage("arx");
-    }
-
-  }, [arxWallet, worldIdAuthenticated]);
 
   return (
     <div className="container-fluid h-full flex flex-col items-center justify-center">
@@ -66,11 +70,21 @@ function App() {
         <StageCounter currentStage={currentStage} />
       )}
 
-      {currentStage === "arx" && <ArxLoginPage setArxWallet={setArxWallet} />}
-      {currentStage === "worldid" && (
-        <WorldIdLoginPage setIsAuthenticated={setWorldIdAuthenticated} />
+      {currentStage === "arx" && (
+        <ArxLoginPage
+          setCurrentStage={setCurrentStage}
+          setArxWallet={setArxWallet}
+        />
       )}
-      {currentStage === "walletconnect" && <MinaLoginPage />}
+      {currentStage === "worldid" && (
+        <WorldIdLoginPage
+          setCurrentStage={setCurrentStage}
+          setIsAuthenticated={setWorldIdAuthenticated}
+        />
+      )}
+      {currentStage === "walletconnect" && (
+        <MinaLoginPage setCurrentStage={setCurrentStage} />
+      )}
       {currentStage === "main" && <MainPage />}
       <ToastContainer />
     </div>

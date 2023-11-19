@@ -35,15 +35,17 @@ const ProposalsTable = () => {
     address: contractAddress,
     abi: ABI,
     functionName: 'vote',
+    args: [0, true]
   })
   const { write: voteFor } = useContractWrite(configVoteFor)
 
   const { config: configVoteAgainst, error: errorVoteAgainst } = usePrepareContractWrite({
     address: contractAddress,
     abi: ABI,
-    functionName: 'feed',
+    functionName: 'vote',
+    args: [0, false]
   })
-  const { write: voteAgainst } = useContractWrite(config)
+  const { write: voteAgainst } = useContractWrite(configVoteAgainst)
 
 
   return (
@@ -80,6 +82,7 @@ const ProposalsTable = () => {
                     {item.for}{" "}
                     <button
                       onClick={() => {
+                        voteFor()
                         toast.success("You voted for this proposal");
                       }}
                       className="text-pink-500 ml-2 bg-pink-100 px-2 py-1 rounded-lg hover:bg-pink-200"
@@ -97,6 +100,7 @@ const ProposalsTable = () => {
                     {item.against}{" "}
                     <button
                       onClick={() => {
+                        voteAgainst()
                         toast.success("You voted for this proposal");
                       }}
                       className="text-pink-500 ml-2 bg-pink-100 px-2 py-1 rounded-lg hover:bg-pink-200"

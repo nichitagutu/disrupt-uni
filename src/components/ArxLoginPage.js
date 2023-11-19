@@ -31,7 +31,7 @@ const style = {
   padding: "2rem",
 };
 
-const ArxLoginPage = ({ setArxWallet }) => {
+const ArxLoginPage = ({ setArxWallet, setCurrentStage }) => {
   const [pairingLink, setPairingLink] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -59,6 +59,7 @@ const ArxLoginPage = ({ setArxWallet }) => {
         hasIcon={true}
       />
       <ArxLoginButton
+        setCurrentStage={setCurrentStage}
         setPairingLink={setPairingLink}
         setArxWallet={setArxWallet}
       />
@@ -76,7 +77,7 @@ const ArxLoginPage = ({ setArxWallet }) => {
   );
 };
 
-const ArxLoginButton = ({ setPairingLink, setArxWallet }) => {
+const ArxLoginButton = ({ setPairingLink, setArxWallet, setCurrentStage }) => {
   const [statusText, setStatusText] = useState("Tap uni card");
   async function mobileConnect() {
     let command = {
@@ -137,7 +138,12 @@ const ArxLoginButton = ({ setPairingLink, setArxWallet }) => {
     try {
       const result = await Gate.execHaloCmd(command);
       console.log("Command completed. Result: " + JSON.stringify(result));
-      setArxWallet(result.input.etherAddress);
+      setArxWallet(result.etherAddress);
+      const saveStage = (stage) => {
+        localStorage.setItem("currentStage", stage);
+      };
+      saveStage("worldid");
+      setCurrentStage("worldid");
     } catch (e) {
       console.log("Failed to request command execution: " + e.stack);
     }
