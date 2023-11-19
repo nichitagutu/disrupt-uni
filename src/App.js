@@ -6,6 +6,7 @@ import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
 import Profile from "./components/Profile";
 import MainPage from "./pages/MainPage";
+import { useAccount } from 'wagmi'
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -36,28 +37,28 @@ const provider = ethers.providers.getDefaultProvider("sepolia");
 eas.connect(provider);
 
 function App() {
-  const minaWallet = window.mina;
+  const { address, isConnecting, isDisconnected } = useAccount()
   const [arxWallet, setArxWallet] = useState(null);
   const [worldIdAuthenticated, setWorldIdAuthenticated] = useState(false);
-  const [currentStage, setCurrentStage] = useState(minaWallet ? "arx" : "mina");
+  const [walletAddress, setWalletAddress] = useState(address);
+  const [currentStage, setCurrentStage] = useState("arx");
 
   console.log("currentStage ", currentStage);
 
   console.log("arxWallet", arxWallet);
 
   useEffect(() => {
-    if (minaWallet === undefined) {
-      setCurrentStage("mina");
+    if (arxWallet !== null && worldIdAuthenticated && walletAddress) {
+      setCurrentStage("main");
+    } else if (arxWallet !== null && !worldIdAuthenticated) {
+      setCurrentStage("worldid");
+    } else if (arxWallet !== null && worldIdAuthenticated && !walletAddress) {
+      setCurrentStage("walletconnect");
     } else {
-      if (arxWallet !== null && worldIdAuthenticated) {
-        setCurrentStage("main");
-      } else if (arxWallet !== null) {
-        setCurrentStage("worldid");
-      } else {
-        setCurrentStage("arx");
-      }
+      setCurrentStage("arx");
     }
-  }, [arxWallet, worldIdAuthenticated, minaWallet]);
+
+  }, [arxWallet, worldIdAuthenticated]);
 
   return (
     <div className="container-fluid h-full flex flex-col items-center justify-center">
@@ -69,7 +70,7 @@ function App() {
       {currentStage === "worldid" && (
         <WorldIdLoginPage setIsAuthenticated={setWorldIdAuthenticated} />
       )}
-      {currentStage === "mina" && <MinaLoginPage />}
+      {currentStage === "walletconnect" && <MinaLoginPage />}
       {currentStage === "main" && <MainPage />}
       <ToastContainer />
     </div>

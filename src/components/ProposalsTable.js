@@ -1,6 +1,9 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as NounsGlasses } from "./nouns_glasses.svg";
+import { usePrepareContractWrite, useContractWrite } from 'wagmi'
+import ABI from '../contracts/ABI.json';
+
 const data = [
   {
     name: "Fund a new methodology initiative",
@@ -25,7 +28,24 @@ const data = [
   },
 ];
 
+const contractAddress = "0xD3Fdec79074942F36929A80E816dB379d0Af99ab";
+
 const ProposalsTable = () => {
+  const { config: configVoteFor, error: errorVoteFor } = usePrepareContractWrite({
+    address: contractAddress,
+    abi: ABI,
+    functionName: 'vote',
+  })
+  const { write: voteFor } = useContractWrite(configVoteFor)
+
+  const { config: configVoteAgainst, error: errorVoteAgainst } = usePrepareContractWrite({
+    address: contractAddress,
+    abi: ABI,
+    functionName: 'feed',
+  })
+  const { write: voteAgainst } = useContractWrite(config)
+
+
   return (
     <div className="overflow-x-auto m-12 rounded-xl shadow-lg">
       <table className="min-w-full bg-white">

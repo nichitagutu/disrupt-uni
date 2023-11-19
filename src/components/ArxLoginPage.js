@@ -136,8 +136,8 @@ const ArxLoginButton = ({ setPairingLink, setArxWallet }) => {
 
     try {
       const result = await Gate.execHaloCmd(command);
-      setArxWallet(result.output.etherAddress);
       console.log("Command completed. Result: " + JSON.stringify(result));
+      setArxWallet(result.input.etherAddress);
     } catch (e) {
       console.log("Failed to request command execution: " + e.stack);
     }
