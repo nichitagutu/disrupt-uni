@@ -7,9 +7,9 @@ import "./index.css";
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
 
 import { WagmiConfig } from 'wagmi'
-import { arbitrum, mainnet } from 'viem/chains'
+import { sepolia } from 'viem/chains'
 
-const projectId = 'a7c794712372a47ac0a630aa17ddf260'
+const projectId = 'eb7b24286a4ca20fbcd75c3f30c3ea07'
 
 const metadata = {
   name: 'Web3Modal',
@@ -18,7 +18,7 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 }
 
-const chains = [mainnet, arbitrum]
+const chains = [sepolia]
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 
