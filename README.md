@@ -1,14 +1,15 @@
 
 # Universe
 
+[**DEMO LINK**](https://disrupt-uni.vercel.app/)
+
 Universe is a protocol and a dapp proving that a transparent and academic community owned system for public institutions like universities purchases and elections is possible.
 <br>
 <br>
 
 ## Intro 
 
-![banner github universe](https://github.com/nichitagutu/disrupt-uni/assets/119045809/2f06f26e-bd6a-4666-b198-1a799bc38e78)
-
+![banner github universe](banner_github_universe.png)
 
 
 Helena from our team has been doing the OSINT investigations about corruption in Ukrainian universities.
