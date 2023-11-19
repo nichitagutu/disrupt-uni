@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as NounsGlasses } from "./nouns_glasses.svg";
-import { usePrepareContractWrite, useContractWrite } from 'wagmi'
+import { usePrepareContractWrite, useContractWrite, useContractRead, useAccount, useWalletClient } from 'wagmi'
+import ConnectButton from "./ConnectButton";
 import ABI from '../contracts/ABI.json';
+import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
+import { ethers } from "ethers";
+import {
+  EAS,
+  Offchain,
+  SchemaRegistry,
+} from "@ethereum-attestation-service/eas-sdk";
+import { providers } from "ethers";
+
+const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
+const EASSchemaUID =
+  "0x8d27497483b403775138b1d1830ad3914f7654db9ec22badd1944abcdbbb6911";
 
 const data = [
   {
@@ -28,26 +41,114 @@ const data = [
   },
 ];
 
+export function walletClientToSigner(walletClient) {
+  const { account, chain, transport } = walletClient;
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address
+  };
+  const provider = new providers.Web3Provider(transport, network);
+  const signer = provider.getSigner(account.address);
+
+  return signer;
+}
+
+
+export function useSigner() {
+  const { data: walletClient } = useWalletClient();
+
+  const [signer, setSigner] = useState(undefined);
+  useEffect(() => {
+    async function getSigner() {
+      if (!walletClient) return;
+
+      const tmpSigner = walletClientToSigner(walletClient);
+
+      setSigner(tmpSigner);
+    }
+
+    getSigner();
+
+  }, [walletClient]);
+  return signer;
+}
+
 const contractAddress = "0xD3Fdec79074942F36929A80E816dB379d0Af99ab";
 
 const ProposalsTable = () => {
+  const { address, isConnecting, isDisconnected } = useAccount()
   const { config: configVoteFor, error: errorVoteFor } = usePrepareContractWrite({
     address: contractAddress,
     abi: ABI,
     functionName: 'vote',
+    args: [0, true]
   })
   const { write: voteFor } = useContractWrite(configVoteFor)
 
   const { config: configVoteAgainst, error: errorVoteAgainst } = usePrepareContractWrite({
     address: contractAddress,
     abi: ABI,
-    functionName: 'feed',
+    functionName: 'vote',
+    args: [0, false]
   })
-  const { write: voteAgainst } = useContractWrite(config)
+  const { write: voteAgainst } = useContractWrite(configVoteAgainst)
 
+  const { data: contractData, isError, isLoading } = useContractRead({
+    address: contractAddress,
+    abi: ABI,
+    functionName: 'getProposalResult',
+    args: [0]
+  })
+
+  data[0].for = contractData[1].toString()
+  data[0].against = contractData[2].toString()
+  console.log(contractData)
+
+  // Initialize the sdk with the address of the EAS Schema contract address
+  const eas = new EAS(EASContractAddress);
+
+  // Gets a default provider (in production use something else like infura/alchemy)
+  const provider = ethers.providers.getDefaultProvider("sepolia");
+
+  // Connects an ethers style provider/signingProvider to perform read/write functions.
+  // MUST be a signer to do write operations!
+  const signer = useSigner();
+
+  eas.connect(signer);
+
+  // Initialize SchemaEncoder with the schema string
+  const schemaEncoder = new SchemaEncoder("string university, string description, bool hasVoted");
+
+
+  const schemaUID = "0xb16fa048b0d597f5a821747eba64efa4762ee5143e9a80600d0005386edfc995";
+
+  async function attest() {
+    const encodedData = schemaEncoder.encodeData([
+      { name: "university", value: "My Uni", type: "string" },
+      { name: "description", value: "my description", type: "string" },
+      { name: "hasVoted", value: true, type: "bool" },
+    ]);
+
+    const tx = await eas.attest({
+      schema: schemaUID,
+      data: {
+        recipient: address,
+        expirationTime: 0,
+        revocable: false, // Be aware that if your schema is not revocable, this MUST be false
+        data: encodedData,
+      },
+    });
+
+    const newAttestationUID = await tx.wait();
+
+    console.log("New attestation UID:", newAttestationUID);
+  }
 
   return (
     <div className="overflow-x-auto m-12 rounded-xl shadow-lg">
+      <ConnectButton />
+      {!isLoading && !isError && contractData}
       <table className="min-w-full bg-white">
         <thead className=" text-black ">
           <tr>
@@ -80,6 +181,8 @@ const ProposalsTable = () => {
                     {item.for}{" "}
                     <button
                       onClick={() => {
+                        voteFor();
+                        attest();
                         toast.success("You voted for this proposal");
                       }}
                       className="text-pink-500 ml-2 bg-pink-100 px-2 py-1 rounded-lg hover:bg-pink-200"
@@ -97,6 +200,8 @@ const ProposalsTable = () => {
                     {item.against}{" "}
                     <button
                       onClick={() => {
+                        voteAgainst();
+                        attest();
                         toast.success("You voted for this proposal");
                       }}
                       className="text-pink-500 ml-2 bg-pink-100 px-2 py-1 rounded-lg hover:bg-pink-200"

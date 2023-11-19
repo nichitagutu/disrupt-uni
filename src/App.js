@@ -6,7 +6,7 @@ import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
 import Profile from "./components/Profile";
 import MainPage from "./pages/MainPage";
-import { useAccount } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,7 +17,7 @@ import {
   SchemaEncoder,
   SchemaRegistry,
 } from "@ethereum-attestation-service/eas-sdk";
-import { ethers } from "ethers";
+
 import ArxLoginPage from "./components/ArxLoginPage";
 import WorldIdLoginPage from "./components/WorldIdLoginPage";
 import MinaLoginPage from "./components/NoWalletPage";
@@ -25,16 +25,6 @@ import MinaLoginPage from "./components/NoWalletPage";
 const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
 const EASSchemaUID =
   "0x8d27497483b403775138b1d1830ad3914f7654db9ec22badd1944abcdbbb6911";
-
-// Initialize the sdk with the address of the EAS Schema contract address
-const eas = new EAS(EASContractAddress);
-
-// Gets a default provider (in production use something else like infura/alchemy)
-const provider = ethers.providers.getDefaultProvider("sepolia");
-
-// Connects an ethers style provider/signingProvider to perform read/write functions.
-// MUST be a signer to do write operations!
-eas.connect(provider);
 
 function App() {
   const { address, isConnecting, isDisconnected } = useAccount()
